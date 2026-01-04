@@ -1,31 +1,23 @@
 def draw_table(data: list[dict[str, str | int]]) -> str:
-  lines = []
-  headers = list(data[0].keys())
-  column_widths = [
-    max(data, lambda item: len(item[h]))
-    for h in headers
-  ]
+    headers = list(data[0].keys())
+    column_widths = [
+        max(len(h), max(len(str(item[h])) for item in data))
+        for h in headers
+    ]
 
-  # Top border
-  separator = "+" + "+".join(map(lambda w: '-' * (w + 2), column_widths)) + "+"
-  lines.append(separator)
+    separator = "+" + "+".join("-" * (w + 2) for w in column_widths) + "+"
 
-  # Header row
-  header_row = "|" + "|".join((map(lambda h, i: f" {h.capitalize().ljust(column_widths[i])} ", enumerate(headers)))) + "|"
-  lines.append(header_row)
+    header_row = "|" + "|".join(
+        f" {h.capitalize().ljust(w - 1)}"
+        for h, w in zip(headers, column_widths)
+    ) + "|"
 
-	# Header separator
-	lines.append(separator)
+    rows = []
+    for item in data:
+        row_content = "|".join(
+            f" {str(item[h]).ljust(w)} "
+            for h, w in zip(headers, column_widths)
+        )
+        rows.append(f"|{row_content}|")
 
-	for item in data:
-		row = "|" + "|".join(
-			map(
-				lambda h, i: f" {item[h].ljust(column_widths[i])} ",
-				enumerate(headers)
-			)
-		) + "|"
-		lines.append(row)
-
-	lines.append(separator)
-
-	return "\n".join(lines)
+    return "\n".join([separator, header_row, separator] + rows + [separator])
