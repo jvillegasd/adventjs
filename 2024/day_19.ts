@@ -25,10 +25,12 @@ function distributeWeight(weight: number): string {
         const box = [...boxesStr[current]]
         const nextBox = stack[i + 1] ?? null
 
+        // Add padding to the last line to simulate the next box top
         if (nextBox && current < nextBox) {
             box[box.length - 1] = box[box.length - 1].padEnd(padWidth[nextBox], '_')
         }
 
+        // Add box to result, skipping the top of the next box since it's already added
         lines.push(...(i === 0 ? box : box.slice(1)))
     }
 
